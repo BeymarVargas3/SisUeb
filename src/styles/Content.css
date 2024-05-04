@@ -1,0 +1,33 @@
+.content {
+  width: 75%;
+  margin: 0 auto; /* Centra el contenido horizontalmente */
+}
+
+.content--header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Centra horizontalmente el contenido */
+}
+.header--title {
+  color: #526d82;
+  align-items: end;
+  margin-right: 10px; /* Ajusta el margen entre el título y la imagen */
+}
+
+.image--institucion {
+  width: 600px;
+}
+.img--reloj {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 80vh;
+  justify-content: center;
+  flex-direction: column;
+}
+.reloj--actual {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 30px;
+}

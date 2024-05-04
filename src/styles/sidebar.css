@@ -1,0 +1,86 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2.3rem;
+  height: 94vh;
+}
+
+.logo {
+  text-align: center;
+  padding: 5px;
+  color: #27374d;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0vh;
+}
+.separatortitle {
+  order: none; /* Elimina el borde predeterminado */
+  border-top: 2px solid darkred; /* Añade un borde superior de 3px sólido y negro */
+  margin: 2px 1;
+}
+.logo-icon {
+  width: 50px;
+  margin-bottom: 2px;
+}
+.logoname {
+  align-items: center;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 20px;
+  margin-top: 2px;
+}
+.menu--list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 0px;
+}
+
+.menu--list .item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 10px;
+  transition: 0.3s ease-in-out;
+  color: #27374d;
+}
+
+.menu--list .item:hover {
+  background: #27374d;
+  color: #dde6ed;
+}
+
+.separator {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #27374d;
+  padding: 1px;
+  cursor: pointer;
+  margin-bottom: 1px; /* Ajusta la distancia entre los separadores */
+}
+
+.separator.active {
+  background-color: #dde6ed; /* Cambia el color de fondo cuando está activo */
+}
+
+.sub-menu {
+  margin-left: 5px;
+}
+
+.sub-menu .item {
+  padding: 8px;
+}
+
+.sub-menu .item:hover {
+  color: #dde6ed;
+  background: #27374d;
+}
+
+.separator.active + .separator {
+  margin-top: 0px;
+  padding: 0%;
+}
