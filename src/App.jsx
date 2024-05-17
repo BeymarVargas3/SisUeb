@@ -3,8 +3,8 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Inicio from "./components/Inicio";
-import Facultad from "./components/Facultad/Facultad";
-import Carrera from "./components//Carrera/Carrera";
+import Facultad from "./components/Parametros/Facultad";
+import Carrera from "./components/Parametros/Carrera";
 const App = () => {
   return (
     <div>

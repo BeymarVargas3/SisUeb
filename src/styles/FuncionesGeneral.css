@@ -58,8 +58,6 @@
 .tabla thead {
   position: sticky;
   top: 0;
-  background-color: #ffffff; /* Fondo blanco para evitar que se superponga al contenido */
-  z-index: 1; /* Asegúrate de que el encabezado esté por encima del contenido */
 }
 
 .tabla tbody {

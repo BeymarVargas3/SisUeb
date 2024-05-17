@@ -11,10 +11,12 @@ const Facultad = () => {
     data: {},
   });
   const [formData, setFormData] = useState({
+    id: 0,
     nombre: "",
     estado: "A",
     detalle: "",
   });
+
   useEffect(() => {
     getFacultades();
   }, []);
@@ -22,12 +24,19 @@ const Facultad = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const getFacultades = async () => {
     const respuesta = await axios.get(url);
     setFacultades(respuesta.data);
   };
 
   const handleModalOpen = (type, data = {}) => {
+    setFormData({
+      id: data.id || 0,
+      nombre: data.nombre || "",
+      estado: data.estado || "A",
+      detalle: data.detalle || "",
+    });
     setModalData({
       show: true,
       type,
@@ -43,20 +52,71 @@ const Facultad = () => {
     });
   };
 
-  const handleModalSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:5034/api/Facultad/GuardarFacultad",
-        formData
-      );
-      console.log("Datos guardados:", response.data);
+      let response;
+      if (modalData.type === "crear") {
+        response = await axios.post(
+          "http://localhost:5034/api/Facultad/GuardarFacultad",
+          formData
+        );
+      } else if (modalData.type === "editar") {
+        response = await axios.put(
+          "http://localhost:5034/api/Facultad/ModificarFacultad",
+          formData
+        );
+      }
       handleModalClose();
       getFacultades();
+      console.log("Datos guardados:", response.data);
     } catch (error) {
       console.error("Error al guardar los datos:", error);
     }
   };
+
+  const renderForm = () => (
+    <form onSubmit={handleFormSubmit}>
+      <div className="InputsValores">
+        {modalData.type !== "editar" && (
+          <>
+            <label>Id:</label>
+            <input
+              type="text"
+              id="id"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              readOnly
+            />
+          </>
+        )}
+        <label>Nombre:</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          placeholder="Nombre"
+          value={formData.nombre}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="InputsValores">
+        <label>Detalle:</label>
+        <textarea
+          id="detalle"
+          name="detalle"
+          placeholder="Detalle"
+          value={formData.detalle}
+          onChange={handleChange}
+          cols="30"
+        />
+      </div>
+      <button type="submit">
+        {modalData.type === "crear" ? "Guardar" : "Modificar"}
+      </button>
+    </form>
+  );
 
   return (
     <div>
@@ -157,63 +217,16 @@ const Facultad = () => {
             <span className="close" onClick={handleModalClose}>
               &times;
             </span>
-            <form onSubmit={handleModalSubmit}>
-              {modalData.type === "crear" && (
-                <>
-                  Crear
-                  <div className="InputsValores">
-                    <label>Nombre:</label>
-                    <input
-                      type="text"
-                      id="nombre"
-                      name="nombre"
-                      placeholder="Nombre"
-                      value={formData.nombre}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="InputsValores">
-                    <label> Detalle:</label>
-                    <textarea
-                      id="detalle"
-                      name="detalle"
-                      placeholder="Detalle"
-                      value={formData.detalle}
-                      onChange={handleChange}
-                      cols="30"
-                    />
-                  </div>
-                </>
-              )}
-              {(modalData.type === "editar" ||
-                modalData.type === "cambiarEstado") && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Nombre"
-                    defaultValue={modalData.data.nombre}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Estado"
-                    defaultValue={modalData.data.estado}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Detalle"
-                    defaultValue={modalData.data.detalle}
-                  />
-                </>
-              )}
-              {modalData.type === "eliminar" && (
-                <p>¿Estás seguro de eliminar esta facultad?</p>
-              )}
-              <button type="submit">Enviar</button>
-            </form>
+            {modalData.type === "eliminar" ? (
+              <p>¿Estás seguro de eliminar esta facultad?</p>
+            ) : (
+              renderForm()
+            )}
           </div>
         </div>
       )}
     </div>
   );
 };
+
 export default Facultad;
