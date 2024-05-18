@@ -16,18 +16,16 @@ const Facultad = () => {
     estado: "",
     detalle: "",
   });
-
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
   useEffect(() => {
     getFacultades();
   }, []);
-  useEffect(() => {
-    if (modalData.type === "cambiarEstado" && formData.id !== 0) {
-      handleFormSubmit();
-    }
-  }, [formData, modalData.type]);
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const getFacultades = async () => {
     const respuesta = await axios.get(url);
@@ -56,10 +54,22 @@ const Facultad = () => {
     });
   };
 
-  const handleCambiarEstado = async (facultad) => {
-    setFormData(facultad);
-    modalData.type = "cambiarEstado";
-    handleFormSubmit();
+  const handleModificarEstado = async (accion, facultad) => {
+    try {
+      let response;
+      if (accion === "cambiarEstado") {
+        response = await axios.put(
+          `http://localhost:5034/api/Facultad/CambiarEstadoFacultad?id=${facultad.id}`
+        );
+      } else if (accion === "eliminar") {
+        response = await axios.delete(
+          `http://localhost:5034/api/Facultad/EliminarFacultad?id=${facultad.id}`
+        );
+      }
+      getFacultades();
+    } catch (error) {
+      console.error("Error al cambiar el estado:", error);
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -77,10 +87,6 @@ const Facultad = () => {
         response = await axios.put(
           "http://localhost:5034/api/Facultad/ModificarFacultad",
           formData
-        );
-      } else if (modalData.type === "cambiarEstado") {
-        response = await axios.put(
-          `http://localhost:5034/api/Facultad/CambiarEstadoFacultad?id=${formData.id}`
         );
       }
       if (response && response.data) {
@@ -101,14 +107,7 @@ const Facultad = () => {
         {modalData.type !== "editar" && (
           <>
             <label>Id:</label>
-            <input
-              type="text"
-              id="id"
-              name="id"
-              value={formData.id}
-              onChange={handleChange}
-              readOnly
-            />
+            <input type="text" id="id" name="id" value={formData.id} readOnly />
           </>
         )}
         <label>Nombre:</label>
@@ -117,8 +116,8 @@ const Facultad = () => {
           id="nombre"
           name="nombre"
           placeholder="Nombre"
-          value={formData.nombre}
           onChange={handleChange}
+          value={formData.nombre}
         />
       </div>
       <div className="InputsValores">
@@ -127,13 +126,13 @@ const Facultad = () => {
           id="detalle"
           name="detalle"
           placeholder="Detalle"
-          value={formData.detalle}
           onChange={handleChange}
+          value={formData.detalle}
           cols="30"
         />
       </div>
       <button type="submit">
-        {modalData.type === "crear" ? "Guardar" : "Modificar"}
+        {modalData.type === "editar" ? "Guardar" : "Modificar"}
       </button>
     </form>
   );
@@ -211,13 +210,17 @@ const Facultad = () => {
                       </button>
                       <button
                         className="Buttons"
-                        onClick={() => handleCambiarEstado(facultad)}
+                        onClick={() =>
+                          handleModificarEstado("cambiarEstado", facultad)
+                        }
                       >
                         Cambiar Estado
                       </button>
                       <button
                         className="Buttons"
-                        onClick={() => handleModalOpen("eliminar", facultad)}
+                        onClick={() =>
+                          handleModificarEstado("eliminar", facultad)
+                        }
                       >
                         Eliminar
                       </button>
