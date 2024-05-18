@@ -13,14 +13,18 @@ const Facultad = () => {
   const [formData, setFormData] = useState({
     id: 0,
     nombre: "",
-    estado: "A",
+    estado: "",
     detalle: "",
   });
 
   useEffect(() => {
     getFacultades();
   }, []);
-
+  useEffect(() => {
+    if (modalData.type === "cambiarEstado" && formData.id !== 0) {
+      handleFormSubmit();
+    }
+  }, [formData, modalData.type]);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -52,8 +56,16 @@ const Facultad = () => {
     });
   };
 
+  const handleCambiarEstado = async (facultad) => {
+    setFormData(facultad);
+    modalData.type = "cambiarEstado";
+    handleFormSubmit();
+  };
+
   const handleFormSubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     try {
       let response;
       if (modalData.type === "crear") {
@@ -66,10 +78,18 @@ const Facultad = () => {
           "http://localhost:5034/api/Facultad/ModificarFacultad",
           formData
         );
+      } else if (modalData.type === "cambiarEstado") {
+        response = await axios.put(
+          `http://localhost:5034/api/Facultad/CambiarEstadoFacultad?id=${formData.id}`
+        );
+      }
+      if (response && response.data) {
+        console.log("Datos guardados:", response.data);
+      } else {
+        console.log("La respuesta no contiene datos.");
       }
       handleModalClose();
       getFacultades();
-      console.log("Datos guardados:", response.data);
     } catch (error) {
       console.error("Error al guardar los datos:", error);
     }
@@ -160,7 +180,7 @@ const Facultad = () => {
         </button>
       </div>
       <div className="tabla">
-        <div className="col-12 col-1g-8 offset-0 offset-1g-12">
+        <div>
           <div
             className="table-responsive"
             style={{ maxHeight: "400px", overflowY: "auto" }}
@@ -191,9 +211,7 @@ const Facultad = () => {
                       </button>
                       <button
                         className="Buttons"
-                        onClick={() =>
-                          handleModalOpen("cambiarEstado", facultad)
-                        }
+                        onClick={() => handleCambiarEstado(facultad)}
                       >
                         Cambiar Estado
                       </button>
