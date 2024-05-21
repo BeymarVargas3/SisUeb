@@ -11,11 +11,15 @@ const Facultad = () => {
     data: {},
   });
   const [formData, setFormData] = useState({
-    id: 0,
+    id: "",
     nombre: "",
     estado: "",
     detalle: "",
   });
+  const [isDragging, setIsDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -23,6 +27,7 @@ const Facultad = () => {
       [name]: value,
     }));
   };
+
   useEffect(() => {
     getFacultades();
   }, []);
@@ -44,6 +49,10 @@ const Facultad = () => {
       type,
       data,
     });
+    setPosition({
+      x: window.innerWidth / 2 - 250,
+      y: window.innerHeight / 2 - 150,
+    });
   };
 
   const handleModalClose = () => {
@@ -56,19 +65,18 @@ const Facultad = () => {
 
   const handleModificarEstado = async (accion, facultad) => {
     try {
-      let response;
       if (accion === "cambiarEstado") {
-        response = await axios.put(
+        await axios.put(
           `http://localhost:5034/api/Facultad/CambiarEstadoFacultad?id=${facultad.id}`
         );
       } else if (accion === "eliminar") {
-        response = await axios.delete(
+        await axios.delete(
           `http://localhost:5034/api/Facultad/EliminarFacultad?id=${facultad.id}`
         );
       }
-      getFacultades();
+      getFacultades(); // Refresh faculty list after any action
     } catch (error) {
-      console.error("Error al cambiar el estado:", error);
+      console.error("Error:", error);
     }
   };
 
@@ -88,57 +96,118 @@ const Facultad = () => {
           "http://localhost:5034/api/Facultad/ModificarFacultad",
           formData
         );
+      } else if (modalData.type === "consultar") {
+        response = await axios.get(
+          `http://localhost:5034/api/Facultad/BuscarFacultad?id=${formData.id}`
+        );
+        handleModalOpen("consultar", response.data);
       }
       if (response && response.data) {
         console.log("Datos guardados:", response.data);
       } else {
         console.log("La respuesta no contiene datos.");
       }
-      handleModalClose();
+
       getFacultades();
     } catch (error) {
       console.error("Error al guardar los datos:", error);
     }
   };
 
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setOffset({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    });
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      setPosition({
+        x: e.clientX - offset.x,
+        y: e.clientY - offset.y,
+      });
+    }
+  };
+  const handleRowClick = (facultad) => {
+    setFormData(facultad);
+  };
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   const renderForm = () => (
-    <form onSubmit={handleFormSubmit}>
-      <div className="InputsValores">
-        {modalData.type !== "editar" && (
+    <form onSubmit={handleFormSubmit} className="form">
+      <div className="modal-content">
+        {modalData.type === "crear" && (
           <>
-            <label>Id:</label>
-            <input type="text" id="id" name="id" value={formData.id} readOnly />
+            <label className="modal-title">CREAR FACULTAD</label>
           </>
         )}
-        <label>Nombre:</label>
-        <input
-          type="text"
-          id="nombre"
-          name="nombre"
-          placeholder="Nombre"
-          onChange={handleChange}
-          value={formData.nombre}
-        />
+        {modalData.type === "editar" && (
+          <>
+            <label className="modal-title">MODIFICAR FACULTAD</label>
+            <div className="form-group">
+              <label>Id:</label>
+              <input
+                type="text"
+                id="id"
+                name="id"
+                placeholder="ID"
+                onChange={handleChange}
+                value={formData.id}
+              />
+            </div>
+          </>
+        )}
+        {modalData.type === "consultar" && (
+          <>
+            <label className="modal-title">CONSULTAR FACULTAD</label>
+            <div className="form-group">
+              <label>Id:</label>
+              <input
+                type="text"
+                id="id"
+                name="id"
+                placeholder="ID"
+                onChange={handleChange}
+                value={formData.id}
+              />
+            </div>
+          </>
+        )}
+        <div className="form-group">
+          <label>Nombre:</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            placeholder="Nombre"
+            onChange={handleChange}
+            value={formData.nombre}
+          />
+        </div>
+        <div className="form-group">
+          <label>Detalle:</label>
+          <textarea
+            id="detalle"
+            name="detalle"
+            placeholder="Detalle"
+            onChange={handleChange}
+            value={formData.detalle}
+            cols="30"
+          />
+        </div>
+        <button className="button" type="submit">
+          {modalData.type}
+        </button>
       </div>
-      <div className="InputsValores">
-        <label>Detalle:</label>
-        <textarea
-          id="detalle"
-          name="detalle"
-          placeholder="Detalle"
-          onChange={handleChange}
-          value={formData.detalle}
-          cols="30"
-        />
-      </div>
-      <button type="submit">
-        {modalData.type === "editar" ? "Guardar" : "Modificar"}
-      </button>
     </form>
   );
 
   return (
-    <div>
+    <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <h1 className="Titulo">Datos Facultad</h1>
       <div className="Menu--Buttons">
         <button
@@ -149,27 +218,29 @@ const Facultad = () => {
         </button>
         <button
           className="Buttons"
-          onClick={() => handleModalOpen("editar", {})}
+          onClick={(e) => {
+            handleModalOpen("editar", formData);
+          }}
         >
           Editar
         </button>
         <button
           className="Buttons"
-          onClick={() => handleModalOpen("cambiarEstado", {})}
+          onClick={() => handleModificarEstado("cambiarEstado", formData)}
         >
           Cambiar Estado
         </button>
         <button
           className="Buttons"
-          onClick={() => handleModalOpen("eliminar", {})}
+          onClick={() => handleModificarEstado("eliminar", formData)}
         >
           Eliminar
         </button>
         <button
           className="Buttons"
-          onClick={() => handleModalOpen("consultas", {})}
+          onClick={() => handleModalOpen("consultar", formData)}
         >
-          Consultas
+          Consultar
         </button>
         <button
           className="Buttons"
@@ -196,7 +267,10 @@ const Facultad = () => {
               </thead>
               <tbody>
                 {facultades.map((facultad) => (
-                  <tr key={facultad.id}>
+                  <tr
+                    key={facultad.id}
+                    onClick={() => handleRowClick(facultad)}
+                  >
                     <td>{facultad.id}</td>
                     <td>{facultad.nombre}</td>
                     <td>{facultad.estado}</td>
@@ -204,23 +278,28 @@ const Facultad = () => {
                     <td>
                       <button
                         className="Buttons"
-                        onClick={() => handleModalOpen("editar", facultad)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleModalOpen("editar", facultad);
+                        }}
                       >
                         Editar
                       </button>
                       <button
                         className="Buttons"
-                        onClick={() =>
-                          handleModificarEstado("cambiarEstado", facultad)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleModificarEstado("cambiarEstado", facultad);
+                        }}
                       >
                         Cambiar Estado
                       </button>
                       <button
                         className="Buttons"
-                        onClick={() =>
-                          handleModificarEstado("eliminar", facultad)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleModificarEstado("eliminar", facultad);
+                        }}
                       >
                         Eliminar
                       </button>
@@ -233,13 +312,33 @@ const Facultad = () => {
         </div>
       </div>
       {modalData.show && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="modal-overlay">
+          <div
+            className="modal"
+            onMouseDown={handleMouseDown}
+            style={{ left: `${position.x}px`, top: `${position.y}px` }}
+          >
             <span className="close" onClick={handleModalClose}>
               &times;
             </span>
             {modalData.type === "eliminar" ? (
-              <p>¿Estás seguro de eliminar esta facultad?</p>
+              <div className="modal-content">
+                <p>¿Estás seguro de eliminar esta facultad?</p>
+                <button
+                  className="button"
+                  onClick={() =>
+                    handleModificarEstado("eliminar", modalData.data)
+                  }
+                >
+                  Sí
+                </button>
+                <button
+                  className="button cancel-button"
+                  onClick={handleModalClose}
+                >
+                  No
+                </button>
+              </div>
             ) : (
               renderForm()
             )}
