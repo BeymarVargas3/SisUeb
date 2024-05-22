@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { BiHome, BiSolidReport, BiStats, BiTask } from 'react-icons/bi';
-import '../styles/sidebar.css';
-import LogoUeb from '../assets/UEB.png';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { BiHome, BiSolidReport, BiStats, BiTask } from "react-icons/bi";
+import "../styles/sidebar.css";
+import facultad from "../assets/facultad.png";
+import carrera from "../assets/la-licenciatura.png";
+import materia from "../assets/presentacion.png";
+import LogoUeb from "../assets/UEB.png";
 const Sidebar = () => {
   const [proyectosVisible, setProyectosVisible] = useState(false);
   const [parametrosVisible, setParametrosVisible] = useState(false);
@@ -53,97 +56,112 @@ const Sidebar = () => {
     setProyectosVisible(false);
   };
   return (
-    <div className='menu'>
-      <div className='logo'>
-        <img src={LogoUeb} className='logo-icon'/>
-        <h2 className='logoname'>Universidad Evangelica Boliviana</h2>
+    <div className="menu">
+      <div className="logo">
+        <img src={LogoUeb} className="logo-icon" />
+        <h2 className="logoname">Universidad Evangelica Boliviana</h2>
       </div>
       <hr className="separatortitle" />
-      <div className='menu--list'>
+      <div className="menu--list">
         {/* Dashboard */}
-        <Link to ='/' className="item" onClick={handleDashboardClick}>
-          <BiHome className='icon' />
+        <Link to="/" className="item" onClick={handleDashboardClick}>
+          <BiHome className="icon" />
           Dashboard
         </Link>
         {/* Proyectos */}
-        <div className={`separator ${proyectosVisible ? 'active' : ''}`} onClick={handleProyectosClick}>
+        <div
+          className={`separator ${proyectosVisible ? "active" : ""}`}
+          onClick={handleProyectosClick}
+        >
           Proyectos
           {proyectosVisible && (
-            <div className='sub-menu'>
+            <div className="sub-menu">
               <a href="/proyectos" className="item">
-                <BiTask className='icon' />
+                <BiTask className="icon" />
                 Gestionar proyectos
               </a>
               <a href="#" className="item">
-                <BiSolidReport className='icon' />
+                <BiSolidReport className="icon" />
                 Gestionar requisitos
               </a>
             </div>
           )}
         </div>
         {/* Requisitos */}
-        <div className={`separator ${requisitosVisible ? 'active' : ''}`} onClick={handleRequisitosClick}>
+        <div
+          className={`separator ${requisitosVisible ? "active" : ""}`}
+          onClick={handleRequisitosClick}
+        >
           Requisitos
           {requisitosVisible && (
-            <div className='sub-menu'>
+            <div className="sub-menu">
               <a href="#" className="item">
-                <BiStats className='icon' />
+                <BiStats className="icon" />
                 Gestionar requisitos
               </a>
             </div>
           )}
         </div>
         {/* Parametro y configuracion */}
-        <div className={`separator ${parametrosVisible ? 'active' : ''}`} onClick={handleParametrosClick}>
+        <div
+          className={`separator ${parametrosVisible ? "active" : ""}`}
+          onClick={handleParametrosClick}
+        >
           Parámetro y configuración
           {parametrosVisible && (
-            <div className='sub-menu'>
-              <Link to='/Facultad' className="item">
-                <BiTask className='icon' />
+            <div className="sub-menu">
+              <Link to="/Facultad" className="item">
+                <img src={facultad} alt="facultad" />
                 Facultad
               </Link>
-              <Link to='Carrera' className="item">
-                <BiSolidReport className='icon' />
+              <Link to="Carrera" className="item">
+                <img src={carrera} alt="carrera" />
                 Carrera
               </Link>
               <a href="#" className="item">
-                <BiSolidReport className='icon' />
+                <img src={materia} alt="materia" />
                 Materia
               </a>
             </div>
           )}
         </div>
         {/* Reportes */}
-        <div className={`separator ${reportesVisible ? 'active' : ''}`} onClick={handleReportesClick}>
+        <div
+          className={`separator ${reportesVisible ? "active" : ""}`}
+          onClick={handleReportesClick}
+        >
           Reportes
           {reportesVisible && (
-            <div className='sub-menu'>
+            <div className="sub-menu">
               <a href="#" className="item">
-                <BiTask className='icon' />
+                <BiTask className="icon" />
                 Reportes estadisticos
               </a>
               <a href="#" className="item">
-                <BiSolidReport className='icon' />
+                <BiSolidReport className="icon" />
                 Reportes para control
               </a>
             </div>
           )}
         </div>
         {/* Aministracion*/}
-        <div className={`separator ${administracionVisible? 'active' : ''}`} onClick={handleAdministracionClick}>
+        <div
+          className={`separator ${administracionVisible ? "active" : ""}`}
+          onClick={handleAdministracionClick}
+        >
           Usuario, seguridad y auditoria
           {administracionVisible && (
-            <div className='sub-menu'>
+            <div className="sub-menu">
               <a href="#" className="item">
-                <BiTask className='icon' />
+                <BiTask className="icon" />
                 Gestionar usuarios
               </a>
               <a href="#" className="item">
-                <BiSolidReport className='icon' />
+                <BiSolidReport className="icon" />
                 Gestionar roles y permisos
               </a>
               <a href="#" className="item">
-                <BiSolidReport className='icon' />
+                <BiSolidReport className="icon" />
                 Administración de bitacora
               </a>
             </div>

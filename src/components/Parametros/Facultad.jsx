@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/FuncionesGeneral.css";
 import axios from "axios";
+import editarIcon from "../../assets/editar-archivo.png";
+import eliminarIcon from "../../assets/borrar.png";
+import cambiarEstadoIcon from "../../assets/desactivar.png";
 
 const Facultad = () => {
   const url = "http://localhost:5034/api/Facultad/ListarFacultad";
@@ -107,7 +110,6 @@ const Facultad = () => {
       } else {
         console.log("La respuesta no contiene datos.");
       }
-
       getFacultades();
     } catch (error) {
       console.error("Error al guardar los datos:", error);
@@ -283,7 +285,7 @@ const Facultad = () => {
                           handleModalOpen("editar", facultad);
                         }}
                       >
-                        Editar
+                        <img src={editarIcon} alt="Editar" />
                       </button>
                       <button
                         className="Buttons"
@@ -292,7 +294,7 @@ const Facultad = () => {
                           handleModificarEstado("cambiarEstado", facultad);
                         }}
                       >
-                        Cambiar Estado
+                        <img src={cambiarEstadoIcon} alt="cambiarEstado" />
                       </button>
                       <button
                         className="Buttons"
@@ -301,7 +303,7 @@ const Facultad = () => {
                           handleModificarEstado("eliminar", facultad);
                         }}
                       >
-                        Eliminar
+                        <img src={eliminarIcon} alt="eliminar" />
                       </button>
                     </td>
                   </tr>

@@ -69,6 +69,8 @@
 
 .sub-menu {
   margin-left: 5px;
+  padding: 10px;
+  border: 1px solid #ccc;
 }
 
 .sub-menu .item {
@@ -83,4 +85,19 @@
 .separator.active + .separator {
   margin-top: 0px;
   padding: 0%;
+}
+.item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
+.item img {
+  width: 25px;
+  height: 25px;
+}
+
+.item a {
+  color: #333;
+  text-decoration: none;
 }

@@ -164,3 +164,15 @@
 .inputs-valores {
   width: 100%;
 }
+.Buttons {
+  background: none;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.Buttons img {
+  width: 28px; /* Ajusta el tamaño según tus necesidades */
+  height: 28px;
+  /* Ajusta el tamaño según tus necesidades */
+}
